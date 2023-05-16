@@ -1,23 +1,34 @@
 package com.aninfo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 
 @Entity
 public class Transaction {
+    public enum TransactionType {
+        DEPOSIT,
+        WITHDRAW
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Double balance;
+    private Double amount;
 
     private String type;
+
+    @ManyToOne
+    @JoinColumn(name = "cbu")
+    private Account account;
 
     public Transaction(){
     }
 
-    public Transaction(Double balance, String type) {
-        this.balance = balance;
+    public Transaction(Double amount, String type){
+        this.amount = amount;
         this.type = type;
     }
 
@@ -29,12 +40,12 @@ public class Transaction {
         this.id = id;
     }
 
-    public Double getBalance() {
-        return balance;
+    public Double getAmount() {
+        return amount;
     }
 
-    public void setBalance(Double balance) {
-        this.balance = balance;
+    public void setAmount(Double amount) {
+        this.amount = amount;
     }
 
     public String getType() {
@@ -43,5 +54,9 @@ public class Transaction {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
     }
 }

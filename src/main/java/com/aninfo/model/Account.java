@@ -2,6 +2,8 @@ package com.aninfo.model;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.ArrayList;
+import com.aninfo.model.Transaction;
 
 @Entity
 public class Account {
@@ -12,7 +14,7 @@ public class Account {
 
     private Double balance;
 
-    @OneToMany
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions;
 
     public Account(){
@@ -36,6 +38,14 @@ public class Account {
 
     public void setBalance(Double balance) {
         this.balance = balance;
+    }
+
+    public void addTransaction(Transaction transaction) {
+        transactions.add(transaction);
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
     }
 
 }

@@ -5,9 +5,9 @@ import com.aninfo.exceptions.InsufficientFundsException;
 import com.aninfo.model.Account;
 import com.aninfo.repository.AccountRepository;
 import com.aninfo.repository.TransactionRepository;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.aninfo.model.Transaction;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -18,15 +18,14 @@ public class TransactionService {
 
     @Autowired
     private TransactionRepository transactionRepository;
-    @Autowired
-    private AccountRepository accountRepository;
 
-
-    public Transaction createTransaction(Transaction transaction) {
+    @Transactional
+    public Transaction createTransaction(Double amount, String type) {
+        Transaction transaction = new Transaction(amount, type);
         return transactionRepository.save(transaction);
     }
 
-    public List<Transaction> getAccounts() {
+    public List<Transaction> getTransactions() {
         return transactionRepository.findAll();
     }
 
@@ -42,34 +41,6 @@ public class TransactionService {
         transactionRepository.deleteById(id);
     }
 
+
     // WORK ON WITHDRAW AND DEPOSIT
-    @Transactional
-    public Transaction withdraw(Long cbu, Double sum) {
-        Account account = accountRepository.findAccountByCbu(cbu);
-
-        accountRepository.save(account);
-    }
-
-    @Transactional
-    public Account deposit(Long cbu, Double sum) {
-
-        if (sum <= 0) {
-            throw new DepositNegativeSumException("Cannot deposit negative sums");
-        }
-
-        if (sum >= 2000) {
-            double promoSum = sum * 0.10;
-            if (promoSum > 500) {
-                promoSum = 500;
-            }
-            sum += promoSum;
-        }
-
-        Account account = transactionRepository.findAccountByCbu(cbu);
-        account.setBalance(account.getBalance() + sum);
-        transactionRepository.save(account);
-
-        return account;
-    }
-
 }
